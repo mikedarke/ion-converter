@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
 using System.Reflection;
 using Amazon.IonDotnet.Tree;
 using Amazon.IonDotnet.Tree.Impl;
-using IonConverter.FieldHandlers;
-using System.Linq;
 
 namespace IonConverter {            
     public class IonDocumentBuilder {
@@ -39,15 +36,6 @@ namespace IonConverter {
                 if (value != null) {
                     parent.SetField(info.Name, value);
                 }                  
-            }
-        }
-
-        public void BuildList(IIonValue parent, IEnumerable instance) {            
-            foreach (var item in instance) {
-                var itemType = item.GetType();
-                var handler = _fieldHandlers.GetHandler(itemType);
-                IIonValue listItem = handler.Convert(item);
-                parent.Add(listItem);
             }
         }
 

@@ -18,6 +18,8 @@ namespace IonConverter.Tests.Models {
             set;
         }
 
+        public DateTime CreatedAt {get; set;}
+
         public List<Transaction> Transactions {get; set;}
 
         public User AccountHolder {get; set;}

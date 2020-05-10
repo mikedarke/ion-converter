@@ -13,7 +13,7 @@ namespace IonConverter.FieldHandlers {
         }}
         public IonDocumentBuilder Builder {get; set;}
 
-        public Boolean IsHandledType(Type t) {
+        public virtual Boolean IsHandledType(Type t) {
             return Array.IndexOf(_handledTypes, t) > -1;
         }
         

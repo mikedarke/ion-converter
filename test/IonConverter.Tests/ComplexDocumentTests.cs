@@ -10,10 +10,12 @@ namespace IonConverter.Tests
         [Fact]
         public void BuildsComplexAccountDocument()
         {
+            var createdAt = new DateTime(2020, 5, 10);
             var a = new ComplexAccount {
                 AccountId = "ABC1",
                 Balance = 12.0M,
                 IsActive = true,
+                CreatedAt = createdAt,
                 AccountHolder = new User {
                     Id = 1,
                     Name = "Han Solo"
@@ -31,6 +33,8 @@ namespace IonConverter.Tests
             Assert.Equal(a.AccountId, doc.GetField("AccountId").StringValue);
             Assert.Equal(a.Balance, doc.GetField("Balance").DecimalValue);
             Assert.Equal(a.IsActive, doc.GetField("IsActive").BoolValue);
+            Assert.Equal(2, doc.GetField("Transactions").Count);
+            Assert.Equal(createdAt, doc.GetField("CreatedAt").TimestampValue.DateTimeValue);
         }
     }
 }

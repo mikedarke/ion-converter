@@ -1,22 +1,37 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Amazon.IonDotnet.Tree;
-using Amazon.IonDotnet.Tree.Impl;
+using System.Linq;
 
 namespace IonConverter.FieldHandlers {
     public class ListHandler : BaseHandler, IFieldHandler {
 
         public ListHandler() {
-            _handledTypes = new Type[]{typeof(IEnumerable)};
+            _handledTypes = new Type[]{typeof(IList)};
             _isScalar = false;
         }
 
+        public override Boolean IsHandledType(Type t) {
+            return _handledTypes
+                .Where(handledType => t.GetInterfaces()
+                .Contains(handledType))
+                .Count() > 0;
+        }
+
         public IIonValue Convert(object value) {
-            IIonValue root = Builder.Factory.NewEmptyList();
+            IIonValue list = Builder.Factory.NewEmptyList();
             var enumerableValue = (IEnumerable) value;
-            Builder.BuildList(root, enumerableValue);
-            return root;
+            BuildList(list, enumerableValue);
+            return list;
+        }
+
+        private void BuildList(IIonValue list, IEnumerable instance) {            
+            foreach (var item in instance) {
+                var itemType = item.GetType();
+                var handler = Builder.FieldHandlers.GetHandler(itemType);
+                IIonValue listItem = handler.Convert(item);
+                list.Add(listItem);
+            }
         }
     }
 }
