@@ -3,14 +3,15 @@ using Amazon.IonDotnet.Tree;
 using Amazon.IonDotnet.Tree.Impl;
 
 namespace IonConverter.FieldHandlers {
-    public class StringHandler : IFieldHandler {
-
-        public Type GetHandledType() {
-            return Type.GetType("System.String");
+    public class StringHandler : BaseHandler, IFieldHandler {
+        public StringHandler() {
+            _handledTypes = new Type[]{
+                typeof(System.String)
+            };
         }
 
-        public Func<object, IIonValue> GetHandler(ValueFactory factory) {
-            return (object value) => factory.NewString((string) value);
+        public IIonValue Convert(object value) {
+            return Builder.Factory.NewString((string) value);
         }
     }
 }

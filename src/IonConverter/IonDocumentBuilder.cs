@@ -1,42 +1,62 @@
 using System;
+using System.Collections;
 using System.Reflection;
 using Amazon.IonDotnet.Tree;
 using Amazon.IonDotnet.Tree.Impl;
+using IonConverter.FieldHandlers;
+using System.Linq;
 
 namespace IonConverter {            
     public class IonDocumentBuilder {
+        public FieldHandlerRegistry FieldHandlers {get {return _fieldHandlers;}}
+        public ValueFactory Factory {get {return _factory;}}
+
         ValueFactory _factory;
-        FieldHandlerRegister _fieldHandlers;
-        FieldHandlerRegister FieldHandlers {get;}
+        FieldHandlerRegistry _fieldHandlers;
 
         public IonDocumentBuilder() {
             _factory = new ValueFactory();
-            _fieldHandlers = new FieldHandlerRegister();
+            _fieldHandlers = new FieldHandlerRegistry(this);
         }
 
         public IIonValue BuildFrom<T>(T model) {            
-            PropertyInfo[] myPropertyInfo;
-            // Get the properties of 'Type' class object.
-            myPropertyInfo = model.GetType().GetProperties();
             Console.WriteLine($"Properties of {model.GetType().ToString()} are:");
 
-            var rootFunc = _fieldHandlers.GetByType(model.GetType());
-            IIonValue root;
-            if (rootFunc != null) {
-                root = rootFunc(model);
-            } else {
-                root = _factory.NewEmptyStruct();
-            }        
+            var handler = _fieldHandlers.GetHandler(typeof(T));
+            var built = handler.Convert(model);
+
+            return built;
+        }
+
+        public void BuildChildren(IIonValue parent, object instance) {
+
+            Type instanceType = instance.GetType();
+            PropertyInfo[] myPropertyInfo;
+            myPropertyInfo = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             foreach (var info in myPropertyInfo) {
-                var func = _fieldHandlers.GetByType(info.PropertyType);
-                if (func != null) {
-                    var value = func(info.GetValue(model));
-                    root.SetField(info.Name, value);                    
-                }
+                var value = GetPropertyValue(info, instance);
+                if (value != null) {
+                    parent.SetField(info.Name, value);
+                }                  
             }
+        }
 
-            return root;
+        public void BuildList(IIonValue parent, IEnumerable instance) {            
+            foreach (var item in instance) {
+                var itemType = item.GetType();
+                var handler = _fieldHandlers.GetHandler(itemType);
+                IIonValue listItem = handler.Convert(item);
+                parent.Add(listItem);
+            }
+        }
+
+        private IIonValue GetPropertyValue(PropertyInfo info, object instance) {
+            Type type = info.PropertyType;
+            var handler = _fieldHandlers.GetHandler(type);
+            var value = handler.Convert(info.GetValue(instance));         
+
+            return value;
         }
     }
 }

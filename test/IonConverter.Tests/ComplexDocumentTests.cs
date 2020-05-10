@@ -1,22 +1,31 @@
 using System;
+using System.Collections.Generic;
 using IonConverter.Tests.Models;
 using Xunit;
 
 namespace IonConverter.Tests
 {
-    public class SimpleDocumentTests
+    public class ComplexDocumentTests
     {
         [Fact]
-        public void BuildsSimpleAccountDocument()
+        public void BuildsComplexAccountDocument()
         {
-            var a = new SimpleAccount {
+            var a = new ComplexAccount {
                 AccountId = "ABC1",
                 Balance = 12.0M,
-                IsActive = true
+                IsActive = true,
+                AccountHolder = new User {
+                    Id = 1,
+                    Name = "Han Solo"
+                },
+                Transactions = new List<Transaction> {
+                    new Transaction { Id = 123, Amount = 3.0M },
+                    new Transaction { Id = 234, Amount = 21.0M }
+                }
             };
 
             var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<SimpleAccount>(a);
+            var doc = builder.BuildFrom<ComplexAccount>(a);
             Console.WriteLine("Constructed Document:");
             Console.Write(doc.ToPrettyString());
             Assert.Equal(a.AccountId, doc.GetField("AccountId").StringValue);

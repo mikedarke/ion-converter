@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 
 namespace IonConverter.Tests.Models {
-    public class SimpleAccount {
+    public class ComplexAccount {
         public string AccountId {
             get;
             set;
@@ -16,5 +17,9 @@ namespace IonConverter.Tests.Models {
             get;
             set;
         }
+
+        public List<Transaction> Transactions {get; set;}
+
+        public User AccountHolder {get; set;}
     }
 }

@@ -3,13 +3,14 @@ using Amazon.IonDotnet.Tree;
 using Amazon.IonDotnet.Tree.Impl;
 
 namespace IonConverter.FieldHandlers {
-    public class DecimalHandler : IFieldHandler {
-        public Type GetHandledType() {
-            return Type.GetType("System.Decimal");
+    public class DecimalHandler : BaseHandler, IFieldHandler {
+
+        public DecimalHandler() {
+            _handledTypes = new Type[]{typeof(System.Decimal)};
         }
 
-        public Func<object, IIonValue> GetHandler(ValueFactory factory) {
-            return (object value) => factory.NewDecimal((decimal) value);
+        public IIonValue Convert(object value) {
+            return Builder.Factory.NewDecimal((decimal) value);
         }
     }
 }

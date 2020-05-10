@@ -3,9 +3,13 @@ using Amazon.IonDotnet.Tree;
 using Amazon.IonDotnet.Tree.Impl;
 
 namespace IonConverter.FieldHandlers {
-    interface IFieldHandler {        
-        Func<object, IIonValue> GetHandler(ValueFactory factory);
+    public interface IFieldHandler {
+        IonDocumentBuilder Builder {get; set;}
+        Type[] HandledTypes {get;}
+        IIonValue Convert(object value);
 
-        Type GetHandledType();
+        Boolean IsScalar {get;}
+
+        Boolean IsHandledType(Type t);
     }
 }

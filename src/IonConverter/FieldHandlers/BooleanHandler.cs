@@ -3,13 +3,14 @@ using Amazon.IonDotnet.Tree;
 using Amazon.IonDotnet.Tree.Impl;
 
 namespace IonConverter.FieldHandlers {
-    public class BooleanHandler : IFieldHandler {
-        public Type GetHandledType() {
-            return Type.GetType("System.Boolean");
+    public class BooleanHandler : BaseHandler, IFieldHandler {
+
+        public BooleanHandler() {
+            _handledTypes = new Type[]{Type.GetType("System.Boolean")};
         }
 
-        public Func<object, IIonValue> GetHandler(ValueFactory factory) {
-            return (object value) => factory.NewBool((bool) value);
+        public IIonValue Convert(object value) {
+            return Builder.Factory.NewBool((bool) value);
         }
     }
 }
