@@ -28,10 +28,9 @@ namespace IonConverter {
         public void BuildChildren(IIonValue parent, object instance) {
 
             Type instanceType = instance.GetType();
-            PropertyInfo[] myPropertyInfo;
-            myPropertyInfo = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            PropertyInfo[] propertyInfo = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
-            foreach (var info in myPropertyInfo) {
+            foreach (var info in propertyInfo) {
                 var value = GetPropertyValue(info, instance);
                 if (value != null) {
                     parent.SetField(info.Name, value);
