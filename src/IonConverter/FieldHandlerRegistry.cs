@@ -8,14 +8,12 @@ using IonConverter.FieldHandlers;
 namespace IonConverter {
     public class FieldHandlerRegistry {
         List<IFieldHandler> _registry;
-        IonDocumentBuilder _builder;
         IFieldHandler _defaultHandler;
 
-        public FieldHandlerRegistry(IonDocumentBuilder builder) {
-            _builder = builder;
+        public FieldHandlerRegistry() {
             _registry = new List<IFieldHandler>();          
             RegisterAllHandlers();
-        }      
+        }     
 
         public void Add(IFieldHandler handler) {
             _registry.Add(handler);
@@ -44,7 +42,7 @@ namespace IonConverter {
         void RegisterAllHandlers() {
             GetAllHandlers().ForEach(handler => Add(handler));
             _defaultHandler = new DefaultHandler();
-            _defaultHandler.Builder = _builder;
+            _defaultHandler.FieldHandlers = this;
         }         
 
         List<IFieldHandler> GetAllHandlers()
@@ -54,7 +52,7 @@ namespace IonConverter {
                 .Select(x => {
                     Console.WriteLine($"IFieldHandler: {x.FullName}");
                     var instance = (IFieldHandler) x.GetConstructors().First().Invoke(null);
-                    instance.Builder = _builder;
+                    
                     return instance;
                 })
                 .Where(handler => handler.HandledTypes.Count() > 0)

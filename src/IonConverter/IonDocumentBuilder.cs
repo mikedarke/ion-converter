@@ -8,42 +8,19 @@ namespace IonConverter {
         public FieldHandlerRegistry FieldHandlers {get {return _fieldHandlers;}}
         public ValueFactory Factory {get {return _factory;}}
 
-        ValueFactory _factory;
-        FieldHandlerRegistry _fieldHandlers;
+        readonly ValueFactory _factory;
+        readonly FieldHandlerRegistry _fieldHandlers;
 
         public IonDocumentBuilder() {
             _factory = new ValueFactory();
-            _fieldHandlers = new FieldHandlerRegistry(this);
+            _fieldHandlers = new FieldHandlerRegistry();
         }
 
         public IIonValue BuildFrom<T>(T model) {            
             Console.WriteLine($"Properties of {model.GetType().ToString()} are:");
 
             var handler = _fieldHandlers.GetHandler(typeof(T));
-            var built = handler.Convert(model);
-
-            return built;
-        }
-
-        public void BuildChildren(IIonValue parent, object instance) {
-
-            Type instanceType = instance.GetType();
-            PropertyInfo[] propertyInfo = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
-
-            foreach (var info in propertyInfo) {
-                var value = GetPropertyValue(info, instance);
-                if (value != null) {
-                    parent.SetField(info.Name, value);
-                }                  
-            }
-        }
-
-        private IIonValue GetPropertyValue(PropertyInfo info, object instance) {
-            Type type = info.PropertyType;
-            var handler = _fieldHandlers.GetHandler(type);
-            var value = handler.Convert(info.GetValue(instance));         
-
-            return value;
+            return handler.Convert(model);
         }
     }
 }

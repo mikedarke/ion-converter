@@ -3,6 +3,8 @@ using System;
 namespace IonConverter.FieldHandlers {
     public class BaseHandler {
         protected Type[] _handledTypes;
+        
+        public FieldHandlerRegistry FieldHandlers {get; set;}
 
         protected bool _isScalar = true;
         public bool IsScalar {
