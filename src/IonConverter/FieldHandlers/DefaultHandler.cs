@@ -1,34 +1,45 @@
 using System;
 using System.Reflection;
+using System.Linq;
 using Amazon.IonDotnet.Tree;
-using Amazon.IonDotnet.Tree.Impl;
+using IonConverter.Extensions;
 
 namespace IonConverter.FieldHandlers {
-    public class DefaultHandler : BaseHandler, IFieldHandler {        
+    public class DefaultHandler : BaseHandler, IFieldHandler {   
 
-        public DefaultHandler() {
+        public DefaultHandler() : base() {
             _handledTypes = new Type[]{};
             _isScalar = false;
         }
 
-        public IIonValue Convert(object value) {
-            IIonValue root = Builder.Factory.NewEmptyStruct();
+        public IIonValue ConvertFrom(object value) {
+            IIonValue root = Factory.NewEmptyStruct();
             BuildChildren(root, value);
             return root;
         }
 
         public object ConvertTo(IIonValue value, Type type)
         {
-            var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);            
             var instance = Activator.CreateInstance(type);
 
-            foreach (var prop in props) {
-                if (prop.CanWrite)  {
-                    var field = value.GetField(prop.Name);
-                    var fieldHandler = FieldHandlers.GetHandler(prop.GetType());
-                    if (field != null) {
-                        var fieldValue = fieldHandler.ConvertTo(field, prop.GetType());
-                        type.GetProperty(prop.Name).SetValue(instance, fieldValue);
+            var members = type.GetMembers(BindingFlags.Public | BindingFlags.Instance)
+                .Where(m => (m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property) );
+            foreach (MemberInfo member in members) {                            
+                var field = value.GetField(member.Name);
+                var memberType = member.GetUnderlyingType();
+                var fieldHandler = FieldHandlers.GetHandler(memberType);
+                if (field != null) {
+                    var fieldValue = fieldHandler.ConvertTo(field, memberType);
+                    if (member.MemberType == MemberTypes.Field) {
+                        type.GetField(member.Name).SetValue(instance, fieldValue);
+                        continue;
+                    } 
+
+                    if (member.MemberType == MemberTypes.Property) {
+                        if (((PropertyInfo) member).CanWrite) {
+                            type.GetProperty(member.Name).SetValue(instance, fieldValue);
+                        }                        
                     }
                 }
             }
@@ -50,7 +61,7 @@ namespace IonConverter.FieldHandlers {
         private IIonValue GetPropertyValue(PropertyInfo info, object instance) {
             Type type = info.PropertyType;
             var handler = FieldHandlers.GetHandler(type);
-            var value = handler.Convert(info.GetValue(instance));         
+            var value = handler.ConvertFrom(info.GetValue(instance));         
 
             return value;
         }        

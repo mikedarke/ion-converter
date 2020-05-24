@@ -6,12 +6,12 @@ using Amazon.IonDotnet.Tree.Impl;
 namespace IonConverter.FieldHandlers {
     public class DecimalHandler : BaseHandler, IFieldHandler {
 
-        public DecimalHandler() {
+        public DecimalHandler() : base() {
             _handledTypes = new Type[]{typeof(System.Decimal)};
         }
 
-        public IIonValue Convert(object value) {
-            return Builder.Factory.NewDecimal((decimal) value);
+        public IIonValue ConvertFrom(object value) {
+            return Factory.NewDecimal((decimal) value);
         }
 
         public object ConvertTo(IIonValue value, Type type)

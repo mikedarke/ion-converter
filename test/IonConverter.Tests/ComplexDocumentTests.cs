@@ -33,7 +33,7 @@ namespace IonConverter.Tests
             Assert.Equal(a.AccountId, doc.GetField("AccountId").StringValue);
             Assert.Equal(a.Balance, doc.GetField("Balance").DecimalValue);
             Assert.Equal(a.IsActive, doc.GetField("IsActive").BoolValue);
-            Assert.Equal(2, doc.GetField("Transactions").Count);
+            Assert.Equal(2, doc.GetField("Transactions").Count);            
             Assert.Equal(createdAt, doc.GetField("CreatedAt").TimestampValue.DateTimeValue);
         }
     }

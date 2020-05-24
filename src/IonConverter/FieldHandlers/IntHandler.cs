@@ -6,7 +6,7 @@ using Amazon.IonDotnet.Tree.Impl;
 namespace IonConverter.FieldHandlers {
     public class IntHandler : BaseHandler, IFieldHandler {
 
-        public IntHandler() {
+        public IntHandler() : base() {
             _handledTypes = new Type[]{
                 typeof(System.Int16),
                 typeof(System.Int32),
@@ -14,8 +14,8 @@ namespace IonConverter.FieldHandlers {
             };
         }
 
-        public IIonValue Convert(object value) {
-            return Builder.Factory.NewInt((int) value);
+        public IIonValue ConvertFrom(object value) {
+            return Factory.NewInt((int) value);
         }
 
         public object ConvertTo(IIonValue value, Type type) {

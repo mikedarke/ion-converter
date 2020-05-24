@@ -52,7 +52,7 @@ namespace IonConverter {
                 .Select(x => {
                     Console.WriteLine($"IFieldHandler: {x.FullName}");
                     var instance = (IFieldHandler) x.GetConstructors().First().Invoke(null);
-                    
+                    instance.FieldHandlers = this;
                     return instance;
                 })
                 .Where(handler => handler.HandledTypes.Count() > 0)

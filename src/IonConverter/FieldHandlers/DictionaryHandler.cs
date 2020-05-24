@@ -7,15 +7,15 @@ using System.Reflection;
 namespace IonConverter.FieldHandlers {
     public class DictionaryHandler : BaseHandler, IFieldHandler {
 
-        public DictionaryHandler() {
+        public DictionaryHandler() : base() {
             _handledTypes = new Type[]{typeof(IDictionary)};
             _isScalar = false;
         }
 
         public override Boolean IsHandledType(Type t) {
-            if (t.GetType().GetGenericArguments().Count() < 2) {
-                return false;
-            }
+            // if (t.GetType().GetGenericArguments().Count() < 2) {
+            //     return false;
+            // }
 
             return _handledTypes
                 .Where(handledType => t.GetInterfaces()
@@ -23,8 +23,8 @@ namespace IonConverter.FieldHandlers {
                 .Count() > 0;
         }
 
-        public IIonValue Convert(object value) {
-            IIonValue dict = Builder.Factory.NewEmptyStruct();
+        public IIonValue ConvertFrom(object value) {
+            IIonValue dict = Factory.NewEmptyStruct();
                      
             var enumerableValue = (IDictionary) value;
             BuildDictionary(dict, enumerableValue);
@@ -36,9 +36,9 @@ namespace IonConverter.FieldHandlers {
             var valueType = instance.Values.GetType();          
 
             foreach (var key in instance.Keys) {                                
-                var handler = Builder.FieldHandlers.GetHandler(valueType);
+                var handler = FieldHandlers.GetHandler(valueType);
                 var item = instance[key];
-                IIonValue value = handler.Convert(item);
+                IIonValue value = handler.ConvertFrom(item);
                 dict.SetField(key.ToString(), value);
             }
         }
@@ -49,8 +49,7 @@ namespace IonConverter.FieldHandlers {
             var keyGenericArg = genericArgs[0];
             var valueGenericArg = genericArgs[1];
             var valueHandler = FieldHandlers.GetHandler(valueGenericArg);
-            var genericDictType = type.MakeGenericType(new Type[]{keyGenericArg, valueGenericArg});
-            var dict = (IDictionary) Activator.CreateInstance(genericDictType);
+            var dict = (IDictionary) Activator.CreateInstance(type);
 
             var enumerator = value.GetEnumerator();
             while(enumerator.MoveNext()) {

@@ -20,7 +20,7 @@ namespace IonConverter {
             Console.WriteLine($"Properties of {model.GetType().ToString()} are:");
 
             var handler = _fieldHandlers.GetHandler(typeof(T));
-            return handler.Convert(model);
+            return handler.ConvertFrom(model);
         }
     }
 }

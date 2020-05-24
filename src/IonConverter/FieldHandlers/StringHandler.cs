@@ -5,14 +5,14 @@ using Amazon.IonDotnet.Tree.Impl;
 
 namespace IonConverter.FieldHandlers {
     public class StringHandler : BaseHandler, IFieldHandler {
-        public StringHandler() {
+        public StringHandler() : base() {
             _handledTypes = new Type[]{
                 typeof(System.String)
             };
         }
 
-        public IIonValue Convert(object value) {
-            return Builder.Factory.NewString((string) value);
+        public IIonValue ConvertFrom(object value) {
+            return Factory.NewString((string) value);
         }
 
         public object ConvertTo(IIonValue value, Type type) {

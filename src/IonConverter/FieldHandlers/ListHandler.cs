@@ -7,7 +7,7 @@ using System.Reflection;
 namespace IonConverter.FieldHandlers {
     public class ListHandler : BaseHandler, IFieldHandler {
 
-        public ListHandler() {
+        public ListHandler() : base() {
             _handledTypes = new Type[]{typeof(IList)};
             _isScalar = false;
         }
@@ -23,8 +23,8 @@ namespace IonConverter.FieldHandlers {
                 .Count() > 0;
         }
 
-        public IIonValue Convert(object value) {
-            IIonValue list = Builder.Factory.NewEmptyList();
+        public IIonValue ConvertFrom(object value) {
+            IIonValue list = Factory.NewEmptyList();
             var enumerableValue = (IEnumerable) value;
             BuildIonList(list, enumerableValue);
             return list;
@@ -32,13 +32,12 @@ namespace IonConverter.FieldHandlers {
 
         public object ConvertTo(IIonValue value, Type type) {
             var listGenericArg = type.GetGenericArguments()[0];            
-            var handler = Builder.FieldHandlers.GetHandler(listGenericArg);
-            var genericListType = type.MakeGenericType(listGenericArg);
-            var list = (IList) Activator.CreateInstance(genericListType);
+            var handler = FieldHandlers.GetHandler(listGenericArg);
+            var list = (IList) Activator.CreateInstance(type);
 
             var enumerator = value.GetEnumerator();
             while(enumerator.MoveNext()) {
-                list.Add(handler.ConvertTo(enumerator.Current, listGenericArg.GetType()));                
+                list.Add(handler.ConvertTo(enumerator.Current, listGenericArg));                
             }
 
             return list;
@@ -47,8 +46,8 @@ namespace IonConverter.FieldHandlers {
         private void BuildIonList(IIonValue list, IEnumerable instance) {            
             foreach (var item in instance) {
                 var itemType = item.GetType();
-                var handler = Builder.FieldHandlers.GetHandler(itemType);
-                IIonValue listItem = handler.Convert(item);
+                var handler = FieldHandlers.GetHandler(itemType);
+                IIonValue listItem = handler.ConvertFrom(item);
                 list.Add(listItem);
             }
         }

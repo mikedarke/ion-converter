@@ -7,7 +7,7 @@ namespace IonConverter.FieldHandlers {
     public interface IFieldHandler {
         FieldHandlerRegistry FieldHandlers {get; set;}
         Type[] HandledTypes {get;}
-        IIonValue Convert(object value);
+        IIonValue ConvertFrom(object value);
 
         object ConvertTo(IIonValue value, Type type);
 
