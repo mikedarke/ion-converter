@@ -5,7 +5,7 @@ using IonConverter.Exceptions;
 using System;
 
 namespace IonConverter {
-    public class IonDocumentConverter {
+    public class IonDocumentConverter : IIonDocumentConverter {
         public FieldHandlerRegistry FieldHandlers {get {return _fieldHandlers;}}
         readonly FieldHandlerRegistry _fieldHandlers;
 
@@ -27,5 +27,12 @@ namespace IonConverter {
 
             throw new Exception($"Failed to convert type {type.ToString()}");
         }
+
+        public IIonValue ConvertFrom<T>(T model) {            
+            Console.WriteLine($"Properties of {model.GetType().ToString()} are:");
+
+            var handler = _fieldHandlers.GetHandler(typeof(T));
+            return handler.ConvertFrom(model);
+        }        
     }
 }

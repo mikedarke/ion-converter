@@ -61,7 +61,11 @@ namespace IonConverter.FieldHandlers {
         private IIonValue GetPropertyValue(PropertyInfo info, object instance) {
             Type type = info.PropertyType;
             var handler = FieldHandlers.GetHandler(type);
-            var value = handler.ConvertFrom(info.GetValue(instance));         
+            var instanceValue = info.GetValue(instance);
+            if (instanceValue == null) {
+                return null;
+            }
+            var value = handler.ConvertFrom(instanceValue);         
 
             return value;
         }        

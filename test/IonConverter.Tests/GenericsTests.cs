@@ -33,8 +33,8 @@ namespace IonConverter.Tests
                 }
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<WithGenericList>(a);
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<WithGenericList>(a);
             var listField = doc.GetField("MyList");
             Assert.Equal(4, listField.Count);
             var firstElement = listField.GetElementAt(0);
@@ -53,8 +53,8 @@ namespace IonConverter.Tests
                 }
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<WithStringDictionary>(a);
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<WithStringDictionary>(a);
             var listField = doc.GetField("MyDict");            
             var itemField = listField.GetField("test2");
 
@@ -74,8 +74,8 @@ namespace IonConverter.Tests
                 }
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<WithDecimalDictionary>(a);
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<WithDecimalDictionary>(a);
             var listField = doc.GetField("MyDict");
             var itemField = listField.GetField(3423.543M.ToString());
             Assert.Equal(1004, itemField.BigIntegerValue);

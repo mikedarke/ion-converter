@@ -18,8 +18,8 @@ namespace IonConverter.Tests
                 MyDate = myDate
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<WithDateTime>(a);                                    
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<WithDateTime>(a);                                    
             Assert.Equal(
                 myDate,
                 doc.GetField("MyDate").TimestampValue.DateTimeValue

@@ -23,10 +23,8 @@ namespace IonConverter.Tests
                 }
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<WithArrayList>(a);
-            Console.WriteLine("Constructed Document:");
-            Console.Write(doc.ToPrettyString());
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<WithArrayList>(a);
             var listField = doc.GetField("MyList");
             Assert.Equal(8, listField.Count);
             var firstElement = listField.GetElementAt(4);
@@ -42,10 +40,8 @@ namespace IonConverter.Tests
                 }
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<WithIntArray>(a);
-            Console.WriteLine("Constructed Document:");
-            Console.Write(doc.ToPrettyString());
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<WithIntArray>(a);
             var listField = doc.GetField("MyNumbers");
             Assert.Equal(10, listField.Count);
             var element = listField.GetElementAt(8);
@@ -59,10 +55,8 @@ namespace IonConverter.Tests
                 MyNumbers = new int[] {}
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<WithIntArray>(a);
-            Console.WriteLine("Constructed Document:");
-            Console.Write(doc.ToPrettyString());
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<WithIntArray>(a);
             var listField = doc.GetField("MyNumbers");
             Assert.Equal(0, listField.Count);
         }                        

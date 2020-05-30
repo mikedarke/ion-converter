@@ -15,8 +15,8 @@ namespace IonConverter.Tests
                 IsActive = true
             };
 
-            var builder = new IonConverter.IonDocumentBuilder();
-            var doc = builder.BuildFrom<SimpleAccount>(a);
+            var builder = new IonConverter.IonDocumentConverter();
+            var doc = builder.ConvertFrom<SimpleAccount>(a);
             Console.WriteLine("Constructed Document:");
             Console.Write(doc.ToPrettyString());
             Assert.Equal(a.AccountId, doc.GetField("AccountId").StringValue);

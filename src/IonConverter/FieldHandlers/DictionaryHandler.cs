@@ -32,8 +32,9 @@ namespace IonConverter.FieldHandlers {
         }
 
         private void BuildDictionary(IIonValue dict, IDictionary instance) {
-            var keyType = instance.Keys.GetType();
-            var valueType = instance.Values.GetType();          
+            Type[] typeParameters = instance.GetType().GetGenericArguments();
+            var keyType = typeParameters[0];
+            var valueType = typeParameters[1];          
 
             foreach (var key in instance.Keys) {                                
                 var handler = FieldHandlers.GetHandler(valueType);

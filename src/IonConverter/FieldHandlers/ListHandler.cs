@@ -13,10 +13,6 @@ namespace IonConverter.FieldHandlers {
         }
 
         public override Boolean IsHandledType(Type t) {
-            if (t.GetGenericArguments().Count() == 0) {
-                return false;
-            }
-
             return _handledTypes
                 .Where(handledType => t.GetInterfaces()
                 .Contains(handledType))
